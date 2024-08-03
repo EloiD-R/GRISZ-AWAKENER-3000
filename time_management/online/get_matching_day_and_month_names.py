@@ -9,9 +9,7 @@ day_names_and_numbers = [1, "monday", 2, "tuesday", 3, "wednesday", 4, "thursday
 
 """FUNCTIONS"""
 def get_day_name_based_on_day_number(number):
-    # Using time_getter you get lists so we need to deal with it
-    if type(number) is list:
-         number = number[0]
+    number = format_time_from_time_getter(number)
 
     for index in range(len(day_names_and_numbers)):
         if number == day_names_and_numbers[index]:
@@ -19,15 +17,19 @@ def get_day_name_based_on_day_number(number):
 
 
 def get_month_name_based_on_month_number(number):
-    # Using time_getter you get a str in a list so we need to deal with it
-    if type(number) is list:
-            number = number[0]
-            number = int(number)
+    number = format_time_from_time_getter(number)
 
     for index in range(len(month_names_and_numbers)):
         if number == month_names_and_numbers[index]:
             return month_names_and_numbers[index + 1]
 
+
+# Using time_getter you get a str so we need to deal with it
+def format_time_from_time_getter(number_to_format):
+    if type(number_to_format) is str:
+        number_to_format = int(number_to_format)
+    
+    return number_to_format
 
 
 """CODE"""

@@ -61,17 +61,23 @@ def get_specific_data_from_worldtimeapi(*flags):
     else:
         # Iterate this loop for every flag given to the function
         for flag in flags:
-            # If flag designates day_number_of_week ( it is on another field in the response from API)
-            if flag == 7:
-                return_data.append(day_number_of_week)
-                return return_data
-
-            # Otherwise (If flag designates something within the datetime field from API response)
             for index in range(len(specific_data_from_worldtimeapi_flags)):
                 if specific_data_from_worldtimeapi_flags[index] == flag:
-                    # Getting only the data we want and return it.
-                    specific_data = int(time.strftime(f"%{specific_data_from_worldtimeapi_flags[index + 1]}", parsed_data))
-                    return_data.append(prettify_specific_data(specific_data))
+                    if len(flags) == 1:
+                        # If flag designates day_number_of_week ( it is on another field in the response from API)
+                        if flag == 7:
+                            return day_number_of_week
+                        else:
+                            return prettify_specific_data(int(time.strftime(f"%{specific_data_from_worldtimeapi_flags[index + 1]}", parsed_data)))
+
+                    else:
+                        # Getting only the data we want and return it.
+                        # If flag designates day_number_of_week ( it is on another field in the response from API)
+                        if flag == 7:
+                            return_data.append(day_number_of_week)
+                        else:
+                            specific_data = int(time.strftime(f"%{specific_data_from_worldtimeapi_flags[index + 1]}", parsed_data))
+                            return_data.append(prettify_specific_data(specific_data))
 
     return return_data
 
@@ -84,7 +90,7 @@ def error_chain_check(*vars_to_check):
             return True
 
 
-def prettify_specific_data(*specific_data, convert_to_int=False):
+def prettify_specific_data(*specific_data):
     for data in specific_data:
         # In case of errors from before
         if error_chain_check(data) is None: return None
@@ -102,20 +108,30 @@ if __name__ == "__main__":
 
     # Get and store the infos, so it is easier for printing
     # All available infos from worldtimeapi datetime field
-    year = get_specific_data_from_worldtimeapi(1)
-    month_number = get_specific_data_from_worldtimeapi(2)
-    day_number_of_month = get_specific_data_from_worldtimeapi(3)
-    hour = get_specific_data_from_worldtimeapi(4)
-    minute = get_specific_data_from_worldtimeapi(5)
-    second = get_specific_data_from_worldtimeapi(6)
-    day_number_of_week = get_specific_data_from_worldtimeapi(7)
- 
+    year1, month_number1, day_number_of_month1, hour1, minute1, second1, day_number_of_week1 = get_specific_data_from_worldtimeapi(1, 2, 3, 4, 5, 6, 7)
+
+
+    year2 = get_specific_data_from_worldtimeapi(1)
+    month_number2 = get_specific_data_from_worldtimeapi(2)
+    day_number_of_month2 = get_specific_data_from_worldtimeapi(3)
+    hour2 = get_specific_data_from_worldtimeapi(4)
+    minute2 = get_specific_data_from_worldtimeapi(5)
+    second2 = get_specific_data_from_worldtimeapi(6)
+    day_number_of_week2 = get_specific_data_from_worldtimeapi(7)
+
     # Data not available from worldtimeapi
-    month_name = get_month_name_based_on_month_number(month_number)
-    day_name = get_day_name_based_on_day_number(day_number_of_week)
+    month_name1 = get_month_name_based_on_month_number(month_number1)
+    day_name1 = get_day_name_based_on_day_number(day_number_of_week1)
 
+    month_name2 = get_month_name_based_on_month_number(month_number2)
+    day_name2 = get_day_name_based_on_day_number(day_number_of_week2)
 
+    print(day_number_of_week2)
     # Print the time in all possible formats somebody would like to have
-    print(f"{hour}:{minute}:{second}")
-    print(f"{day_number_of_month}-{month_number}-{year}")
-    print(f"{day_name} {day_number_of_month} of {month_name} {year}")
+    print(f"{hour1}:{minute1}:{second1}")
+    print(f"{day_number_of_month1}-{month_number1}-{year1}")
+    print(f"{day_name1} {day_number_of_month1} of {month_name1} {year1}")
+    print()
+    print(f"{hour2}:{minute2}:{second2}")
+    print(f"{day_number_of_month2}-{month_number2}-{year2}")
+    print(f"{day_name2} {day_number_of_month2} of {month_name2} {year2}")
