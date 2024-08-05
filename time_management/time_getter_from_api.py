@@ -10,16 +10,19 @@ Also, when using the code, if any function returns None, it means that there was
 """IMPORTS"""
 import time
 import requests
+from get_matching_day_and_month_names import *
 
 
 """GLOBAL VARIABLES (kind of)"""
 specific_data_from_worldtimeapi_flags = [1, "Y", # Year
                                           2, "m", # Month
-                                            3, "d", # Day
+                                            3, "d", # Day (of month)
                                               4, "H", # Hour
                                                 5, "M", # Minute
                                                   6, "S", # Second
-                                                    7, "day_of_week_number_number"]
+                                                    7, "day_of_week_number",
+                                                        8, "day_name",
+                                                            9, "month_name"]
 
 """Functions"""
 # Fetch and Parse
@@ -57,29 +60,25 @@ def get_specific_data_from_worldtimeapi(*flags):
 
     if error_chain_check(all_data, day_number_of_week, parsed_data) is None:
         for flag in flags:
-            return_data.append(None)
+            return None
     else:
         # Iterate this loop for every flag given to the function
         for flag in flags:
             for index in range(len(specific_data_from_worldtimeapi_flags)):
                 if specific_data_from_worldtimeapi_flags[index] == flag:
-                    if len(flags) == 1:
-                        # If flag designates day_number_of_week ( it is on another field in the response from API)
-                        if flag == 7:
-                            return day_number_of_week
-                        else:
-                            return prettify_specific_data(int(time.strftime(f"%{specific_data_from_worldtimeapi_flags[index + 1]}", parsed_data)))
-
+                    # If flag designates day_number_of_week ( it is on another field in the response from API)
+                    if flag == 7:
+                        return_data.append(day_number_of_week)
+                    elif flag == 8:
+                        return_data.append(get_day_name_based_on_day_number(day_number_of_week))
+                    elif flag == 9:
+                        return_data.append(get_month_name_based_on_month_number(int(time.strftime(f"%m", parsed_data))))
                     else:
-                        # Getting only the data we want and return it.
-                        # If flag designates day_number_of_week ( it is on another field in the response from API)
-                        if flag == 7:
-                            return_data.append(day_number_of_week)
-                        else:
-                            specific_data = int(time.strftime(f"%{specific_data_from_worldtimeapi_flags[index + 1]}", parsed_data))
-                            return_data.append(prettify_specific_data(specific_data))
+                        # If it is basic data
+                        specific_data = int(time.strftime(f"%{specific_data_from_worldtimeapi_flags[index + 1]}", parsed_data))
+                        return_data.append(prettify_specific_data(specific_data))
 
-    return return_data
+        return return_data if len(flags) > 1 else return_data[0]
 
 
 def error_chain_check(*vars_to_check):
@@ -98,17 +97,14 @@ def prettify_specific_data(*specific_data):
             return f"0{data}"
         else:
             return str(data)
-
-
+        
 
 """CODE"""
-# For debugging/testing
 if __name__ == "__main__":
-    from get_matching_day_and_month_names import *
 
     # Get and store the infos, so it is easier for printing
     # All available infos from worldtimeapi datetime field
-    year1, month_number1, day_number_of_month1, hour1, minute1, second1, day_number_of_week1 = get_specific_data_from_worldtimeapi(1, 2, 3, 4, 5, 6, 7)
+    year1, month_number1, day_number_of_month1, hour1, minute1, second1, day_number_of_week1, day_name1, month_name1 = get_specific_data_from_worldtimeapi(1, 2, 3, 4, 5, 6, 7, 8, 9)
 
 
     year2 = get_specific_data_from_worldtimeapi(1)
@@ -118,15 +114,9 @@ if __name__ == "__main__":
     minute2 = get_specific_data_from_worldtimeapi(5)
     second2 = get_specific_data_from_worldtimeapi(6)
     day_number_of_week2 = get_specific_data_from_worldtimeapi(7)
+    day_name2 = get_specific_data_from_worldtimeapi(8)
+    month_name2 = get_specific_data_from_worldtimeapi(9)
 
-    # Data not available from worldtimeapi
-    month_name1 = get_month_name_based_on_month_number(month_number1)
-    day_name1 = get_day_name_based_on_day_number(day_number_of_week1)
-
-    month_name2 = get_month_name_based_on_month_number(month_number2)
-    day_name2 = get_day_name_based_on_day_number(day_number_of_week2)
-
-    print(day_number_of_week2)
     # Print the time in all possible formats somebody would like to have
     print(f"{hour1}:{minute1}:{second1}")
     print(f"{day_number_of_month1}-{month_number1}-{year1}")

@@ -1,28 +1,21 @@
 """
-Ugly but necessary matching code
+This file is used both on and off line
 """
 
 """GLOBAL VARIABLES (kinda)"""
-# Necessary tables
-month_names_and_numbers = [1, "january", 2, "february", 3, "march", 4, "april", 5, "may", 6, "june", 7, "july", 8, "august", 9, "september", 10, "october", 11, "november", 12, "december"]
-day_names_and_numbers = [1, "monday", 2, "tuesday", 3, "wednesday", 4, "thursday", 5, "friday", 6, "saturday", 7, "sunday"]
+month_names = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"]
+day_names = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+
 
 """FUNCTIONS"""
 def get_day_name_based_on_day_number(number):
     number = format_time_from_time_getter(number)
-
-    for index in range(len(day_names_and_numbers)):
-        if number == day_names_and_numbers[index]:
-            return day_names_and_numbers[index + 1]
+    return day_names[number - 1]
 
 
 def get_month_name_based_on_month_number(number):
     number = format_time_from_time_getter(number)
-
-    for index in range(len(month_names_and_numbers)):
-        if number == month_names_and_numbers[index]:
-            return month_names_and_numbers[index + 1]
-
+    return month_names[number - 1]
 
 # Using time_getter you get a str so we need to deal with it
 def format_time_from_time_getter(number_to_format):
